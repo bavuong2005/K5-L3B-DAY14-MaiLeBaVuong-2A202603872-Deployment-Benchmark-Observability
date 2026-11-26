@@ -122,7 +122,7 @@ Compose cấu hình địa chỉ Redis và Qdrant cho agent trên mạng bridge.
 
 Chạy trong `06-lab-complete/` và giữ nguyên output thật của `python check_production_ready.py`:
 
-Output của lần trợ lý chạy đầy đủ `python check_production_ready.py` trên máy lab trong Ubuntu WSL2, Python 3.11.18 và Docker 29.6.1. Image được grader báo **56 MB**. `docker stop` hoàn thành trong **0,7 giây**, exit code **0**.
+Output của lần học viên tự chạy đầy đủ `python check_production_ready.py` trong Ubuntu WSL2, Python 3.11.18 và Docker 29.6.1. Grader build image trong **2 giây**, báo kích thước **56 MB**. `docker stop` hoàn thành trong **0,8 giây**, exit code **0**.
 
 ```text
   📋 Checklist Deliverable
