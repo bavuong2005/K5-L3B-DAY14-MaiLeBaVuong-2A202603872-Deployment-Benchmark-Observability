@@ -10,7 +10,7 @@
 - `git status --short`: `?? PLAN_DAY14.md`
 - WSL2: Ubuntu đã được cài trong lần hỗ trợ trước. Đề K5 yêu cầu WSL2 trên Windows và không chỉ định distro.
 - Kết quả kiểm tra Windows hiện tại: Python 3.11.9; `os.name` là `nt`; Docker Compose v5.2.0.
-- Tôi chạy lại `docker run --rm hello-world` trong PowerShell. Docker tải image thành công và in `Hello from Docker!`.
+- Chạy lại `docker run --rm hello-world` trong PowerShell. Docker tải image thành công và in `Hello from Docker!`.
 - Kết quả kiểm tra Docker Engine bằng image có sẵn: `python:3.12-slim` chạy thành công, Python 3.12.16.
 - Kết quả kiểm tra CP0 trong WSL2 (điền sau khi hoàn tất):
   - `python3 --version`: `Python 3.14.4`. Lệnh `python` trong venv chưa sẵn sàng vì `venv` báo thiếu `ensurepip`.
@@ -34,7 +34,7 @@
 ### Exercise 1.2 — Chạy app develop
 
 - Chạy `python app.py` trong `01-localhost-vs-production/develop/` bằng container Linux tạm `python:3.12-slim` với các dependency của mẫu. Gửi `POST /ask?question=Hello` bằng Python urllib từ trong container.
-- HTTP 200. Tôi đã chạy app trong PowerShell. Body dưới đây lấy từ lượt kiểm tra trong container.
+- HTTP 200. App đã được chạy trong PowerShell. Body dưới đây lấy từ lượt kiểm tra trong container.
 
 ```json
 {"answer":"Đây là câu trả lời từ AI agent (mock). Trong production, đây sẽ là response từ OpenAI/Anthropic."}
@@ -94,7 +94,7 @@ Compose cấu hình địa chỉ Redis và Qdrant cho agent trên mạng bridge.
 
 ## Part 3 — Cloud Deployment
 
-- Deploy trên Render tại https://k5-day14-agent-enmo.onrender.com. Tôi kiểm tra và nhận được `200 / 200 / 401 / 200` cho `/health`, `/ready`, `POST /ask` thiếu key và `POST /ask` có key. Xem [DEPLOYMENT.md](DEPLOYMENT.md) và ảnh [dashboard](screenshots/dashboard.png), [running](screenshots/running.png), [test](screenshots/test.png).
+- Deploy trên Render tại https://k5-day14-agent-enmo.onrender.com. Kết quả lần kiểm tra trong PowerShell là `200 / 200 / 401 / 200` cho `/health`, `/ready`, `POST /ask` thiếu key và `POST /ask` có key. Xem [DEPLOYMENT.md](DEPLOYMENT.md) và ảnh [dashboard](screenshots/dashboard.png), [running](screenshots/running.png), [test](screenshots/test.png).
 - **So sánh mẫu Railway và Render.** Mẫu Railway đặt builder `NIXPACKS` trong TOML. Mẫu Render đặt `runtime: python` cho web service trong YAML. Cả hai chạy Uvicorn theo `$PORT` và khai báo health check `/health`. Render mô tả biến môi trường và secret ngay trong Blueprint qua `sync: false` hoặc `generateValue: true`, đồng thời có khai báo Redis riêng. Mẫu Railway quản lý biến và Redis qua project. Agent Part 6 dùng một cấu hình Railway riêng với builder `DOCKERFILE`.
 - **Cloud Run.**
   1. Cloud Build cài dependency và chạy pytest trước khi build.
@@ -122,7 +122,7 @@ Compose cấu hình địa chỉ Redis và Qdrant cho agent trên mạng bridge.
 
 Chạy trong `06-lab-complete/` và giữ nguyên output thật của `python check_production_ready.py`:
 
-Tôi chạy đầy đủ `python check_production_ready.py` trong Ubuntu WSL2, Python 3.11.18 và Docker 29.6.1. Grader build image trong **2 giây**, báo kích thước **56 MB**. `docker stop` hoàn thành trong **0,8 giây**, exit code **0**.
+Kết quả chạy đầy đủ `python check_production_ready.py` trong Ubuntu WSL2 với Python 3.11.18 và Docker 29.6.1. Grader build image trong **2 giây**, báo kích thước **56 MB**. `docker stop` hoàn thành trong **0,8 giây**, exit code **0**.
 
 ```text
   📋 Checklist Deliverable
@@ -146,7 +146,9 @@ Tôi chạy đầy đủ `python check_production_ready.py` trong Ubuntu WSL2, P
 
 ## AI log
 
-- **CP0–CP4.** Tôi nhờ AI lập checklist, giải thích lỗi và hỗ trợ chạy mẫu, soạn câu trả lời và ghi kết quả. Tôi tự chạy lại Docker hello-world, chạy hai app CP1 từ PowerShell và kiểm tra `/health`, `/ready` ở CP4.
-- **CP5.** Tôi nhờ AI triển khai các TODO và hỗ trợ thiết lập môi trường chấm. Tôi chạy lại grader đầy đủ trong WSL2 có Docker và nhận `PASS 12/12`; checklist ở trên là kết quả của lần chạy đó.
-- **CP6.** AI hỗ trợ tạo Blueprint và soạn lệnh kiểm tra. Tôi deploy trên Render, tự chạy bốn request kiểm tra và chụp ảnh bằng chứng.
-- **CP7–CP8.** AI hỗ trợ sửa code bài tập, chạy benchmark/eval và ghi báo cáo từ JSON, CSV và log trên máy lab. Tôi mở dashboard, đối chiếu các trace và chụp ảnh Grafana, Jaeger và Prometheus.
+| Ngày | Nội dung trao đổi | AI hỗ trợ | Phần tự làm | Cách kiểm tra |
+| --- | --- | --- | --- | --- |
+| 26/11/2026 | CP0–CP4: môi trường, Docker và app mẫu | Lập checklist, giải thích lỗi, chạy mẫu và soạn nháp câu trả lời | Chạy lại Docker hello-world và hai app CP1 | Gọi `/health` và `/ready` của CP4 trong PowerShell |
+| 26/11/2026 | CP5: hoàn thiện agent và chạy grader | Triển khai TODO và thiết lập môi trường chấm | Chạy lại grader đầy đủ trong WSL2 có Docker | `PASS 12/12`, `43/43 checks passed` |
+| 26/11/2026 | CP6: deploy Render | Tạo Blueprint và soạn lệnh kiểm tra | Deploy, chạy request và chụp ảnh | HTTP `200 / 200 / 401 / 200` |
+| 26/11/2026 | CP7–CP8: benchmark và observability | Sửa code bài tập, chạy benchmark/eval và tổng hợp kết quả | Mở dashboard, xem trace và chụp ảnh | Đối chiếu ảnh Grafana, Jaeger và Prometheus với phần báo cáo |

@@ -24,7 +24,7 @@ curl.exe -sS -o NUL -w "%{http_code}\n" "$base/ready"
 Remove-Variable key,headers
 ```
 
-Tôi chạy các lệnh trên trong PowerShell ngày 26/11/2026:
+Kết quả kiểm tra trong PowerShell ngày 26/11/2026:
 
 | Request | HTTP |
 | --- | --- |
