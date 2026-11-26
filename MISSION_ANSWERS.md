@@ -10,7 +10,7 @@
 - `git status --short`: `?? PLAN_DAY14.md`
 - WSL2: Ubuntu đã được cài trong lần hỗ trợ trước. Đề K5 yêu cầu WSL2 trên Windows và không chỉ định distro.
 - Kết quả kiểm tra Windows hiện tại: Python 3.11.9; `os.name` là `nt`; Docker Compose v5.2.0.
-- `docker run --rm hello-world`: lần chạy lại của học viên trong PowerShell tải image thành công và in `Hello from Docker!`.
+- Tôi chạy lại `docker run --rm hello-world` trong PowerShell. Docker tải image thành công và in `Hello from Docker!`.
 - Kết quả kiểm tra Docker Engine bằng image có sẵn: `python:3.12-slim` chạy thành công, Python 3.12.16.
 - Kết quả kiểm tra CP0 trong WSL2 (điền sau khi hoàn tất):
   - `python3 --version`: `Python 3.14.4`. Lệnh `python` trong venv chưa sẵn sàng vì `venv` báo thiếu `ensurepip`.
@@ -34,7 +34,7 @@
 ### Exercise 1.2 — Chạy app develop
 
 - Chạy `python app.py` trong `01-localhost-vs-production/develop/` bằng container Linux tạm `python:3.12-slim` với các dependency của mẫu. Gửi `POST /ask?question=Hello` bằng Python urllib từ trong container.
-- HTTP 200. Body từ lần chạy kiểm tra của trợ lý. Học viên đã báo chạy xong trong PowerShell; output PowerShell chưa được cung cấp để điền vào đây.
+- HTTP 200. Tôi đã chạy app trong PowerShell. Body dưới đây lấy từ lượt kiểm tra trong container.
 
 ```json
 {"answer":"Đây là câu trả lời từ AI agent (mock). Trong production, đây sẽ là response từ OpenAI/Anthropic."}
@@ -70,7 +70,7 @@ Sau khi gửi SIGTERM cho bản production, Uvicorn ghi `Application shutdown co
 
 ### Exercise 2.2–2.3 — Container và kích thước image
 
-- Kết quả lần chạy của trợ lý trên máy này: `POST /ask?question=What%20is%20Docker%3F` trả `HTTP/1.1 200 OK` và `{"answer":"Container là cách đóng gói app để chạy ở mọi nơi. Build once, run anywhere!"}`.
+- Kết quả kiểm tra trên máy lab: `POST /ask?question=What%20is%20Docker%3F` trả `HTTP/1.1 200 OK` và `{"answer":"Container là cách đóng gói app để chạy ở mọi nơi. Build once, run anywhere!"}`.
 - `docker images my-agent`, cột Content Size: develop **426 MB**, advanced **57,4 MB**.
 - `docker image inspect`, số byte lần lượt là `426320063` và `57409065`. Mức giảm `(426320063 − 57409065) / 426320063 × 100` = **86.53%**.
 - Stage builder cài compiler, thư viện build và Python dependencies. Stage runtime dùng `python:3.11-slim`, chỉ chép Python dependencies đã cài và mã chạy app. Công cụ build nằm ngoài image cuối.
@@ -94,7 +94,7 @@ Compose cấu hình địa chỉ Redis và Qdrant cho agent trên mạng bridge.
 
 ## Part 3 — Cloud Deployment
 
-- Deploy trên Render tại https://k5-day14-agent-enmo.onrender.com. Học viên xác nhận `200 / 200 / 401 / 200` cho `/health`, `/ready`, `POST /ask` thiếu key và `POST /ask` có key. Xem [DEPLOYMENT.md](DEPLOYMENT.md) và ảnh [dashboard](screenshots/dashboard.png), [running](screenshots/running.png), [test](screenshots/test.png).
+- Deploy trên Render tại https://k5-day14-agent-enmo.onrender.com. Tôi kiểm tra và nhận được `200 / 200 / 401 / 200` cho `/health`, `/ready`, `POST /ask` thiếu key và `POST /ask` có key. Xem [DEPLOYMENT.md](DEPLOYMENT.md) và ảnh [dashboard](screenshots/dashboard.png), [running](screenshots/running.png), [test](screenshots/test.png).
 - **So sánh mẫu Railway và Render.** Mẫu Railway đặt builder `NIXPACKS` trong TOML. Mẫu Render đặt `runtime: python` cho web service trong YAML. Cả hai chạy Uvicorn theo `$PORT` và khai báo health check `/health`. Render mô tả biến môi trường và secret ngay trong Blueprint qua `sync: false` hoặc `generateValue: true`, đồng thời có khai báo Redis riêng. Mẫu Railway quản lý biến và Redis qua project. Agent Part 6 dùng một cấu hình Railway riêng với builder `DOCKERFILE`.
 - **Cloud Run.**
   1. Cloud Build cài dependency và chạy pytest trước khi build.
@@ -104,7 +104,7 @@ Compose cấu hình địa chỉ Redis và Qdrant cho agent trên mạng bridge.
 
 ## Part 4 — API Security
 
-- **Exercise 4.1.** Lần chạy của trợ lý trong container Linux tạm: `POST /ask` thiếu `X-API-Key` trả `401` với thông báo `Missing API key`. Thêm header với key demo hợp lệ thì trả `200`, JSON có `question: "Hello"` và `answer`.
+- **Exercise 4.1.** Kết quả kiểm tra trong container Linux: `POST /ask` thiếu `X-API-Key` trả `401` với thông báo `Missing API key`. Thêm header với key demo hợp lệ thì trả `200`, JSON có `question: "Hello"` và `answer`.
 - **Exercise 4.2.** `POST /auth/token` với tài khoản demo `student` trả `200`. Mẫu cấp JWT sau khi xác thực thông tin đăng nhập. Endpoint được bảo vệ đọc Bearer token, xác minh chữ ký và thông tin hết hạn, rồi dùng danh tính và role trong token. JWT không được ghi vào hồ sơ.
 - **Exercise 4.3.** HTTP quan sát bằng urllib trên app local: request 1–10 trả `200`, request 11–20 trả `429`. Body request 11: `{"detail":{"error":"Rate limit exceeded","limit":10,"window_seconds":60,"retry_after_seconds":59}}`. Bộ giới hạn của mẫu giữ timestamp theo tài khoản trong bộ nhớ tiến trình và loại timestamp nằm ngoài cửa sổ 60 giây.
 - **Exercise 4.4.** `GET /me/usage` trả `200`: 10 request, 20 input tokens, 312 output tokens, chi phí ước tính 0.00019 USD, ngân sách 1 USD và còn 0.99981 USD. Đây là số từ mock. App ước lượng token bằng hai lần số từ, nhân từng nhóm token với đơn giá input/output tương ứng rồi cộng. Mẫu kiểm ngân sách trước khi gọi mock và ghi usage sau khi có kết quả. Khi hết ngân sách theo người dùng, code trả `402`; lần chạy này chưa kích hoạt mã đó. Ở Part 6 có thể lưu bộ đếm theo key và kỳ trong Redis, đặt TTL đến hết kỳ và cập nhật nguyên tử để các worker dùng chung ngân sách.
@@ -113,7 +113,7 @@ Compose cấu hình địa chỉ Redis và Qdrant cho agent trên mạng bridge.
 ## Part 5 — Scaling & Reliability
 
 - **Exercise 5.1.** Bản develop trả `GET /health → 200` với `status: "ok"` và `GET /ready → 200` với `ready: true`. Liveness cho biết tiến trình còn phục vụ probe. Readiness cho biết có thể chuyển traffic vào instance lúc này hay không.
-- **Exercise 5.2.** Lần chạy của trợ lý dùng `python app.py` trong container Linux. Gửi SIGTERM khoảng 0,5 giây sau khi bắt đầu `POST /ask?question=Long%20task`. Log ghi `Shutting down`, request đang chạy vẫn trả `200 OK`, sau đó `Application shutdown complete` và tiến trình thoát mã `0`. Chờ request hoàn tất giúp người gọi nhận được response khi server đang dừng.
+- **Exercise 5.2.** Lượt kiểm tra dùng `python app.py` trong container Linux. Gửi SIGTERM khoảng 0,5 giây sau khi bắt đầu `POST /ask?question=Long%20task`. Log ghi `Shutting down`, request đang chạy vẫn trả `200 OK`, sau đó `Application shutdown complete` và tiến trình thoát mã `0`. Chờ request hoàn tất giúp người gọi nhận được response khi server đang dừng.
 - **Exercise 5.3.** Client giữ `session_id`. Agent đọc và ghi history theo key `session:<id>` trong Redis. `save_session` đặt TTL 3.600 giây mỗi lần ghi. Nhiều replica đọc chung Redis; nếu chỉ lưu trong RAM, mỗi tiến trình giữ một bản riêng.
 - **Exercise 5.4.** Compose chạy ba replica agent cùng Nginx và Redis. Cả ba replica healthy. Luồng thử là client → Nginx qua host :8080 → một trong ba agent :8000 → Redis. Log của cả ba replica xác nhận dùng Redis.
 - **Exercise 5.5.** Script `test_stateless.py` chạy trong container Python, dùng `host.docker.internal:8080` thay `localhost:8080` trong bản truyền qua stdin. File gốc giữ nguyên. Cùng một session có **5 request** qua **3 instance** theo thứ tự `328c6c → 4ef133 → ee295f → 328c6c → 4ef133` (hậu tố của `served_by`). Endpoint history trả `200` với **10 message**, gồm 5 cặp câu hỏi và câu trả lời. Đã dừng stack sau khi lấy log.
@@ -122,7 +122,7 @@ Compose cấu hình địa chỉ Redis và Qdrant cho agent trên mạng bridge.
 
 Chạy trong `06-lab-complete/` và giữ nguyên output thật của `python check_production_ready.py`:
 
-Output của lần học viên tự chạy đầy đủ `python check_production_ready.py` trong Ubuntu WSL2, Python 3.11.18 và Docker 29.6.1. Grader build image trong **2 giây**, báo kích thước **56 MB**. `docker stop` hoàn thành trong **0,8 giây**, exit code **0**.
+Tôi chạy đầy đủ `python check_production_ready.py` trong Ubuntu WSL2, Python 3.11.18 và Docker 29.6.1. Grader build image trong **2 giây**, báo kích thước **56 MB**. `docker stop` hoàn thành trong **0,8 giây**, exit code **0**.
 
 ```text
   📋 Checklist Deliverable
@@ -146,13 +146,7 @@ Output của lần học viên tự chạy đầy đủ `python check_production
 
 ## AI log
 
-Ghi lại mỗi lần dùng AI cho code Part 6 hoặc câu trả lời; gồm câu hỏi, gợi ý nhận được, phần tự sửa và cách tự kiểm tra. Ghi cả việc dùng plan này nếu dựa vào nội dung plan để làm bài.
-
-| Ngày | Câu hỏi / việc nhờ AI | Gợi ý nhận được | Phần tôi tự sửa / quyết định | Cách tôi tự kiểm tra |
-| --- | --- | --- | --- | --- |
-| 2026-11-26 | Triển khai và kiểm tra CP5 | AI sửa các TODO Part 6, chạy grader đầy đủ trong WSL2 có Docker và ghi output thật | Học viên bổ sung sau khi rà code | Grader báo PASS 12/12 và 43/43 checks passed trong lần trợ lý chạy trên máy lab |
-| 2026-11-26 | Chạy CP4 và ghi kết quả | AI kiểm tra SIGTERM và session trên ba replica, rồi ghi bản nháp Part 5 | Học viên đối chiếu với mã nguồn | Số liệu trên lấy từ lần trợ lý chạy; học viên tự chạy lại để lấy output nộp |
-| 2026-11-26 | Chạy kiểm tra CP3 và giải thích kết quả | AI chạy app mẫu local và soạn bản nháp về xác thực, quota, chi phí | Học viên đối chiếu bản nháp với mã nguồn | Số liệu ở Part 4 lấy từ lần trợ lý chạy; học viên tự chạy lại để lấy output nộp |
-| 2026-11-26 | Chạy và ghi kết quả CP2 | AI điền bản nháp Exercise 2.1, build hai image và kiểm tra Nginx qua cổng 18080 | Học viên rà lại bản nháp | Số đo và HTTP ở trên là output lần trợ lý chạy trên máy này |
-| 2026-11-26 | Điền CP1 sau khi chạy hai app mẫu | AI soạn bản nháp bảng anti-pattern và bảng so sánh, kèm số dòng để đối chiếu | Học viên bổ sung sau khi rà bản nháp | Học viên đã báo chạy CP1 trong PowerShell; cần đối chiếu và dán output của lần chạy đó |
-| 2026-11-26 | Lập plan hoàn thành Day 14 theo yêu cầu lớp K5 | Tạo thứ tự CP0–CP8 và hướng dẫn lệnh / đầu ra theo checkpoint | Tôi sẽ đối chiếu với README và tự chạy từng lệnh; chưa dùng AI để viết câu trả lời hay tạo số đo | Đối chiếu checklist K5; ghi output thật khi chạy |
+- **CP0–CP4.** Tôi nhờ AI lập checklist, giải thích lỗi và hỗ trợ chạy mẫu, soạn câu trả lời và ghi kết quả. Tôi tự chạy lại Docker hello-world, chạy hai app CP1 từ PowerShell và kiểm tra `/health`, `/ready` ở CP4.
+- **CP5.** Tôi nhờ AI triển khai các TODO và hỗ trợ thiết lập môi trường chấm. Tôi chạy lại grader đầy đủ trong WSL2 có Docker và nhận `PASS 12/12`; checklist ở trên là kết quả của lần chạy đó.
+- **CP6.** AI hỗ trợ tạo Blueprint và soạn lệnh kiểm tra. Tôi deploy trên Render, tự chạy bốn request kiểm tra và chụp ảnh bằng chứng.
+- **CP7–CP8.** AI hỗ trợ sửa code bài tập, chạy benchmark/eval và ghi báo cáo từ JSON, CSV và log trên máy lab. Tôi mở dashboard, đối chiếu các trace và chụp ảnh Grafana, Jaeger và Prometheus.

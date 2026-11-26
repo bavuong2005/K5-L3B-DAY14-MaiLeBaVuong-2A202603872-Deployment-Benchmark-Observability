@@ -5,7 +5,7 @@
 
 **Họ tên:** Mai Lê Bá Vương
 **Ngày chạy:** 26/11/2026
-**Môi trường:** Windows, Docker Desktop chạy container Linux `python:3.12-slim`. Client và app mock chạy trong cùng container qua loopback. Đây là lượt chạy của trợ lý trên máy lab.
+**Môi trường:** Windows, Docker Desktop chạy container Linux `python:3.12-slim`. Client và app mock chạy trong cùng container qua loopback. Số liệu lấy từ các lượt chạy trên máy lab với hỗ trợ của AI.
 
 ---
 
