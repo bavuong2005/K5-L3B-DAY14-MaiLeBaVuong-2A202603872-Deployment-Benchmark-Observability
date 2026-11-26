@@ -122,12 +122,27 @@ Compose cấu hình địa chỉ Redis và Qdrant cho agent trên mạng bridge.
 
 Chạy trong `06-lab-complete/` và giữ nguyên output thật của `python check_production_ready.py`:
 
-Kết quả kỹ thuật từ lần trợ lý chạy trên máy này:
+Output của lần trợ lý chạy đầy đủ `python check_production_ready.py` trên máy lab trong Ubuntu WSL2, Python 3.11.18 và Docker 29.6.1. Image được grader báo **56 MB**. `docker stop` hoàn thành trong **0,7 giây**, exit code **0**.
 
-- Grader Linux chạy với `--skip-docker` và Redis riêng: **37/37 checks passed**, **10/12 tiêu chí**. Hai tiêu chí còn dấu ⚠️ vì chế độ này bỏ qua build/chạy image và `docker stop`.
-- Runtime xác nhận Redis lỗi → `/ready` 503 và `/health` 200, thiếu hoặc sai key → 401, vượt quota → 429 sau đúng 5 request thành công, khởi động lại agent vẫn bị 429, hết budget → 402. Request đang xử lý khi gửi SIGTERM vẫn trả 200 và tiến trình thoát mã 0.
-- Kiểm tra Docker trực tiếp: build thành công, image **58.837.848 byte**, user `agent`, container không có Redis vẫn trả `GET /health → 200`. `docker stop` mất khoảng **0,85 giây**, exit code **0**.
-- Chưa có output chính thức `PASS 12/12` từ một lượt grader đầy đủ. Học viên dán checklist thực tế tại đây sau khi chạy lệnh đầy đủ từ WSL2 có Docker.
+```text
+  📋 Checklist Deliverable
+     ✅ Dockerfile (multi-stage, < 500 MB)
+     ✅ docker-compose.yml (agent + redis)
+     ✅ .dockerignore
+     ✅ Health check endpoint (GET /health)
+     ✅ Readiness endpoint (GET /ready)
+     ✅ API Key authentication
+     ✅ Rate limiting
+     ✅ Cost guard
+     ✅ Config từ environment variables
+     ✅ Structured logging
+     ✅ Graceful shutdown
+     ✅ Public URL ready (Railway / Render config)
+----------------------------------------------------------------
+  Result: 12/12 tiêu chí đạt · 43/43 checks passed
+  🎉 PASS 12/12 — PRODUCTION READY! Deploy nào!
+================================================================
+```
 
 ## AI log
 
@@ -135,7 +150,7 @@ Ghi lại mỗi lần dùng AI cho code Part 6 hoặc câu trả lời; gồm c�
 
 | Ngày | Câu hỏi / việc nhờ AI | Gợi ý nhận được | Phần tôi tự sửa / quyết định | Cách tôi tự kiểm tra |
 | --- | --- | --- | --- | --- |
-| 2026-11-26 | Triển khai và kiểm tra CP5 | AI sửa các TODO Part 6, chạy grader runtime và kiểm tra Docker riêng | Học viên bổ sung sau khi rà code | Học viên chạy grader đầy đủ và lưu checklist thật |
+| 2026-11-26 | Triển khai và kiểm tra CP5 | AI sửa các TODO Part 6, chạy grader đầy đủ trong WSL2 có Docker và ghi output thật | Học viên bổ sung sau khi rà code | Grader báo PASS 12/12 và 43/43 checks passed trong lần trợ lý chạy trên máy lab |
 | 2026-11-26 | Chạy CP4 và ghi kết quả | AI kiểm tra SIGTERM và session trên ba replica, rồi ghi bản nháp Part 5 | Học viên đối chiếu với mã nguồn | Số liệu trên lấy từ lần trợ lý chạy; học viên tự chạy lại để lấy output nộp |
 | 2026-11-26 | Chạy kiểm tra CP3 và giải thích kết quả | AI chạy app mẫu local và soạn bản nháp về xác thực, quota, chi phí | Học viên đối chiếu bản nháp với mã nguồn | Số liệu ở Part 4 lấy từ lần trợ lý chạy; học viên tự chạy lại để lấy output nộp |
 | 2026-11-26 | Chạy và ghi kết quả CP2 | AI điền bản nháp Exercise 2.1, build hai image và kiểm tra Nginx qua cổng 18080 | Học viên rà lại bản nháp | Số đo và HTTP ở trên là output lần trợ lý chạy trên máy này |
